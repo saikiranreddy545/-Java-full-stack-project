@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexStore | Online E-Commerce Shopping System (Frontend)</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-2 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="showSection('shop')">
+                <span class="bg-primary text-white p-2 rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <i class="bi bi-bag-heart-fill fs-5"></i>
+                </span>
+                <span class="brand-gradient fw-bold">NexStore</span>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Nav Links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active fw-semibold" href="#" id="nav-shop" onclick="showSection('shop')"><i class="bi bi-shop me-1"></i> Shop Catalog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#" id="nav-orders" onclick="showSection('orders')"><i class="bi bi-truck me-1"></i> Track Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-danger" href="#" id="nav-admin" onclick="showSection('admin')"><i class="bi bi-shield-lock-fill me-1"></i> Admin Portal</a>
+                    </li>
+                </ul>
+
+                <!-- Live Search Bar -->
+                <div class="d-flex mx-lg-3 my-2 my-lg-0 flex-grow-1" style="max-width: 360px;">
+                    <div class="input-group">
+                        <input id="searchInput" class="form-control bg-light border-0 rounded-start-pill ps-3" type="search" placeholder="Search gadgets, fashion..." oninput="filterProducts()">
+                        <button class="btn btn-primary rounded-end-pill px-3" onclick="filterProducts()"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+
+                <!-- Cart Button -->
+                <button class="btn btn-outline-primary rounded-pill px-3 py-1 d-flex align-items-center gap-2" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                    <i class="bi bi-cart3 fs-5"></i>
+                    <span class="fw-semibold">Cart</span>
+                    <span id="cartBadge" class="badge bg-danger rounded-pill">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION 1: SHOPPING STOREFRONT -->
+    <section id="section-shop" class="py-4">
+        <div class="container">
+            <!-- Hero Banner -->
+            <div class="hero-banner mb-5 shadow-lg">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3">
+                            <i class="bi bi-stars me-1"></i> Mega Season Sale &bull; Up to 40% Off
+                        </span>
+                        <h1 class="display-5 fw-bold mb-3 text-white">Next-Generation Online Shopping Experience</h1>
+                        <p class="lead text-white-50 mb-4">
+                            Discover top electronics, timeless fashion, home essentials, books, and lifestyle collections delivered swiftly to your doorstep.
+                        </p>
+                        <button class="btn btn-light btn-lg rounded-pill px-4 fw-bold text-primary shadow" onclick="filterCategory('All')">
+                            <i class="bi bi-bag-check me-2"></i> Explore Catalog
+                        </button>
+                    </div>
+                    <div class="col-lg-5 d-none d-lg-block text-center">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80" alt="Shopping" class="img-fluid rounded-4 shadow-sm" style="max-height: 250px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Filter Pills -->
+            <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
+                <span class="fw-bold me-2 text-muted">Category:</span>
+                <button class="btn btn-outline-primary category-pill active" onclick="filterCategory('All', this)">All</button>
+                <button class="btn btn-outline-primary category-pill" onclick="filterCategory('Electronics', this)">Electronics & Gadgets</button>
+                <button class="btn btn-outline-primary category-pill" onclick="filterCategory('Fashion', this)">Fashion & Apparel</button>
+                <button class="btn btn-outline-primary category-pill" onclick="filterCategory('Home', this)">Home & Kitchen</button>
+                <button class="btn btn-outline-primary category-pill" onclick="filterCategory('Books', this)">Books & Stationery</button>
+                <button class="btn btn-outline-primary category-pill" onclick="filterCategory('Beauty', this)">Beauty & Wellness</button>
+            </div>
+
+            <!-- Sort Bar -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="text-muted small" id="productCountText">Showing products...</div>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted text-nowrap mb-0">Sort by:</label>
+                    <select id="sortSelect" class="form-select form-select-sm rounded-pill" onchange="sortProducts()">
+                        <option value="featured">Featured / Recommended</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div id="productGrid" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: TRACK ORDERS -->
+    <section id="section-orders" class="py-4 d-none">
+        <div class="container">
+            <h2 class="fw-bold mb-4">Customer Orders & Shipment Tracking</h2>
+            <div id="ordersList" class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: ADMIN CONTROL PORTAL -->
+    <section id="section-admin" class="py-4 d-none">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="badge bg-danger mb-1"><i class="bi bi-shield-lock-fill me-1"></i> Administrator Control Center</span>
+                    <h2 class="fw-bold mb-0">Executive Store Management</h2>
+                </div>
+                <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="bi bi-plus-lg me-1"></i> Add Product
+                </button>
+            </div>
+
+            <!-- KPI Metric Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-green">
+                        <small class="text-uppercase fw-bold text-white-50">Total Revenue</small>
+                        <h3 class="fw-bold mb-0" id="adminRevenue">$1,249.50</h3>
+                        <small class="text-white-50">Simulated orders</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-blue">
+                        <small class="text-uppercase fw-bold text-white-50">Total Orders</small>
+                        <h3 class="fw-bold mb-0" id="adminOrdersCount">5</h3>
+                        <small class="text-white-50">Fulfillment orders</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-purple">
+                        <small class="text-uppercase fw-bold text-white-50">Total Products</small>
+                        <h3 class="fw-bold mb-0" id="adminProductsCount">15</h3>
+                        <small class="text-white-50">Catalog items</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card stat-card-amber">
+                        <small class="text-uppercase fw-bold text-white-50">Low Stock Alerts</small>
+                        <h3 class="fw-bold mb-0" id="adminLowStockCount">2</h3>
+                        <small class="text-white-50">Under 20 units</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Inventory Table -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom fw-bold">Manage Catalog Products</div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductsTable">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHOPPING CART OFFCANVAS DRAWER -->
+    <div class="offcanvas offcanvas-end rounded-start-4" tabindex="-1" id="cartOffcanvas">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold"><i class="bi bi-cart3 me-2 text-primary"></i> Your Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-4">
+            <div id="cartItemsList" class="flex-grow-1 overflow-auto mb-3">
+                <!-- Cart items injected via JS -->
+            </div>
+
+            <div class="border-top pt-3">
+                <div class="d-flex justify-content-between mb-2 small text-muted">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal" class="fw-semibold">$0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small text-muted">
+                    <span>Tax (5%):</span>
+                    <span id="cartTax" class="fw-semibold">$0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 small text-muted">
+                    <span>Shipping:</span>
+                    <span id="cartShipping" class="fw-semibold">FREE</span>
+                </div>
+                <div class="d-flex justify-content-between mb-4 fs-5 fw-bold">
+                    <span>Total Pay:</span>
+                    <span id="cartTotal" class="text-primary">$0.00</span>
+                </div>
+                <button class="btn btn-primary btn-lg rounded-pill w-100 fw-bold shadow" onclick="openCheckout()" id="checkoutBtn">
+                    Proceed to Checkout &rarr;
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-lock-fill text-primary me-2"></i> Secure Checkout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Full Name *</label>
+                            <input type="text" id="chkName" class="form-control rounded-3" value="Alex Johnson" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email Address *</label>
+                            <input type="email" id="chkEmail" class="form-control rounded-3" value="alex@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Phone Number *</label>
+                            <input type="tel" id="chkPhone" class="form-control rounded-3" value="+1 (555) 0144" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Shipping Street Address *</label>
+                            <input type="text" id="chkAddress" class="form-control rounded-3" value="742 Evergreen Terrace" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-8">
+                                <label class="form-label small fw-semibold">City *</label>
+                                <input type="text" id="chkCity" class="form-control rounded-3" value="Springfield" required>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small fw-semibold">ZIP Code *</label>
+                                <input type="text" id="chkZip" class="form-control rounded-3" value="97477" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold">Payment Option *</label>
+                            <select id="chkPayment" class="form-select rounded-3">
+                                <option value="CREDIT_CARD">Credit Card (Simulated)</option>
+                                <option value="DEBIT_CARD">Debit Card (Simulated)</option>
+                                <option value="UPI">UPI / Google Pay / PhonePe</option>
+                                <option value="CASH_ON_DELIVERY">Cash on Delivery (COD)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold shadow">
+                            Place Order (<span id="modalPayTotal">$0.00</span>)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER CONFIRMATION INVOICE MODAL -->
+    <div class="modal fade" id="receiptModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-body p-5 text-center" id="receiptContent">
+                    <!-- Receipt generated via JS -->
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button class="btn btn-outline-secondary rounded-pill px-4" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Print Invoice
+                    </button>
+                    <button class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD PRODUCT MODAL (ADMIN) -->
+    <div class="modal fade" id="addProductModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold">Add Catalog Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form onsubmit="handleAddProductSubmit(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Product Name *</label>
+                            <input type="text" id="addProdName" class="form-control rounded-3" placeholder="e.g. Wireless Smart Speaker" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Category *</label>
+                            <select id="addProdCategory" class="form-select rounded-3" required>
+                                <option value="1">Electronics & Gadgets</option>
+                                <option value="2">Fashion & Apparel</option>
+                                <option value="3">Home & Kitchen</option>
+                                <option value="4">Books & Stationery</option>
+                                <option value="5">Beauty & Wellness</option>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Price ($) *</label>
+                                <input type="number" step="0.01" id="addProdPrice" class="form-control rounded-3" placeholder="99.99" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Stock Units *</label>
+                                <input type="number" id="addProdStock" class="form-control rounded-3" placeholder="30" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Image URL *</label>
+                            <input type="url" id="addProdImg" class="form-control rounded-3" placeholder="https://images.unsplash.com/..." required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold">Description *</label>
+                            <textarea id="addProdDesc" class="form-control rounded-3" rows="3" placeholder="Features, warranty and details..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            Save Product to Catalog
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Frontend Application Logic -->
+    <script src="js/app.js"></script>
+</body>
+</html>

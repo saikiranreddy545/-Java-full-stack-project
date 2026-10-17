@@ -1,0 +1,109 @@
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --accent-color: #f59e0b;
+    --dark-color: #0f172a;
+    --light-bg: #f8fafc;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--light-bg);
+    color: #334155;
+    min-height: 100vh;
+}
+
+.brand-gradient {
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-banner {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+    color: white;
+    border-radius: 1.25rem;
+    padding: 3.5rem 2.5rem;
+}
+
+.product-card {
+    border: none;
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.product-card-img-wrapper {
+    position: relative;
+    height: 220px;
+    background: #f1f5f9;
+    overflow: hidden;
+}
+
+.product-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-card-img {
+    transform: scale(1.05);
+}
+
+.badge-discount {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.5rem;
+}
+
+.badge-stock {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.5rem;
+}
+
+.category-pill {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 50rem;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+}
+
+.category-pill.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.stat-card {
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+}
+.stat-card-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.stat-card-green { background: linear-gradient(135deg, #10b981, #059669); }
+.stat-card-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.stat-card-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }

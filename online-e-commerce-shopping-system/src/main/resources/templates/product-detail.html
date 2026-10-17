@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${product.name} + ' | NexStore')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<main class="py-4">
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}">Products</a></li>
+                <li class="breadcrumb-item" th:if="${product.category != null}">
+                    <a th:href="@{/products(category=${product.category.id})}" th:text="${product.category.name}">Category</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product</li>
+            </ol>
+        </nav>
+
+        <!-- Product Hero Card -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-5">
+            <div class="row g-4 align-items-center">
+                <!-- Image Column -->
+                <div class="col-lg-5 text-center">
+                    <div class="rounded-4 overflow-hidden bg-light position-relative shadow-sm" style="max-height: 450px;">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}" class="img-fluid w-100 h-100 object-fit-cover">
+                        <span th:if="${product.discountPercent > 0}" class="badge-discount" th:text="${product.discountPercent + '% OFF'}">20% OFF</span>
+                    </div>
+                </div>
+
+                <!-- Info Column -->
+                <div class="col-lg-7">
+                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold text-uppercase mb-2" th:text="${product.category?.name}">Category</span>
+                    <h2 class="fw-bold mb-2" th:text="${product.name}">Product Name</h2>
+
+                    <!-- Ratings -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="star-rating me-2">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                        </div>
+                        <span class="fw-bold me-2" th:text="${product.rating}">4.8</span>
+                        <span class="text-muted small" th:text="${'(' + product.reviewCount + ' verified customer ratings)'}">(128 ratings)</span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="d-flex align-items-baseline gap-3 mb-4">
+                        <h2 class="text-primary fw-bold mb-0" th:text="${'$' + #numbers.formatDecimal(product.price, 1, 2)}">$199.99</h2>
+                        <span th:if="${product.originalPrice != null and product.originalPrice > product.price}" 
+                              class="text-decoration-line-through text-muted fs-5" 
+                              th:text="${'$' + #numbers.formatDecimal(product.originalPrice, 1, 2)}">$249.99</span>
+                        <span th:if="${product.discountPercent > 0}" class="badge bg-danger-subtle text-danger px-2 py-1 rounded-2 fw-bold" th:text="${'Save ' + product.discountPercent + '%'}">Save 20%</span>
+                    </div>
+
+                    <p class="text-secondary mb-4" th:text="${product.description}">Detailed product description goes here.</p>
+
+                    <!-- Stock Status -->
+                    <div class="mb-4">
+                        <span th:if="${product.inStock}" class="badge bg-success-subtle text-success fs-6 px-3 py-2 rounded-pill">
+                            <i class="bi bi-check-circle me-1"></i> In Stock (<span th:text="${product.stockQuantity}">10</span> units left)
+                        </span>
+                        <span th:unless="${product.inStock}" class="badge bg-danger-subtle text-danger fs-6 px-3 py-2 rounded-pill">
+                            <i class="bi bi-x-circle me-1"></i> Currently Out of Stock
+                        </span>
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    <form th:action="@{/cart/add}" method="post" class="row g-3 align-items-center mb-4">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <div class="col-auto">
+                            <label for="quantitySelect" class="form-label small text-muted mb-0 fw-semibold">Quantity:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" id="quantitySelect" name="quantity" class="form-control form-control-lg text-center" 
+                                   value="1" min="1" th:max="${product.stockQuantity}" style="width: 80px;" th:disabled="${!product.inStock}">
+                        </div>
+                        <div class="col-auto flex-grow-1">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 shadow fw-bold" th:disabled="${!product.inStock}">
+                                <i class="bi bi-cart-plus me-2"></i> Add to Shopping Cart
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Feature Badges -->
+                    <div class="row g-2 pt-3 border-top text-muted small">
+                        <div class="col-sm-4 d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-check text-primary fs-5"></i>
+                            <span>1-Year Official Warranty</span>
+                        </div>
+                        <div class="col-sm-4 d-flex align-items-center gap-2">
+                            <i class="bi bi-truck text-primary fs-5"></i>
+                            <span>Free Express Delivery</span>
+                        </div>
+                        <div class="col-sm-4 d-flex align-items-center gap-2">
+                            <i class="bi bi-arrow-repeat text-primary fs-5"></i>
+                            <span>30-Day Hassle-Free Returns</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <div th:if="${relatedProducts != null and !relatedProducts.empty}" class="mb-5">
+            <h4 class="fw-bold mb-3">You May Also Like</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+                <div class="col" th:each="rProd : ${relatedProducts}">
+                    <div class="product-card">
+                        <div class="product-card-img-wrapper">
+                            <img th:src="${rProd.imageUrl}" th:alt="${rProd.name}" class="product-card-img">
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <h6 class="fw-bold mb-2 text-truncate" th:text="${rProd.name}">Product Name</h6>
+                            <div class="mt-auto d-flex align-items-baseline gap-2">
+                                <span class="fs-5 fw-bold text-primary" th:text="${'$' + #numbers.formatDecimal(rProd.price, 1, 2)}">$99.99</span>
+                            </div>
+                            <div class="d-flex gap-2 mt-3">
+                                <a th:href="@{/products/{id}(id=${rProd.id})}" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
+                                    View Item &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

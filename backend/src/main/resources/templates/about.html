@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('NexStore | About Project')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<main class="py-5">
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="text-center mb-5">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold text-uppercase mb-2">Project Overview</span>
+            <h2 class="display-5 fw-bold mb-3">Online E-Commerce Shopping System</h2>
+            <p class="lead text-muted mx-auto" style="max-width: 750px;">
+                An enterprise-grade, full-stack online shopping web application built using modern Spring Boot, Thymeleaf templating, Spring Data JPA, and responsive Bootstrap 5 styling.
+            </p>
+        </div>
+
+        <!-- Architecture & Features Grid -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <div class="text-primary fs-1 mb-3"><i class="bi bi-stack"></i></div>
+                    <h5 class="fw-bold">Robust Architecture</h5>
+                    <p class="text-muted small">
+                        Engineered following the <strong>Model-View-Controller (MVC)</strong> architectural pattern with clearly separated presentation, business service logic, and database persistence layers.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <div class="text-success fs-1 mb-3"><i class="bi bi-cart4"></i></div>
+                    <h5 class="fw-bold">Complete Shopping Flow</h5>
+                    <p class="text-muted small">
+                        From catalog searching and multi-category browsing to real-time cart calculations (tax, free shipping thresholds) and multi-payment checkout simulations.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <div class="text-warning fs-1 mb-3"><i class="bi bi-shield-check"></i></div>
+                    <h5 class="fw-bold">Admin Portal & Inventory</h5>
+                    <p class="text-muted small">
+                        Full administrative dashboard equipped with real-time KPI metrics, revenue tracking, low-stock notifications, product catalog CRUD, and live order status management.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack Table -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-5">
+            <h4 class="fw-bold mb-4">Technology Stack</h4>
+            <div class="row g-3">
+                <div class="col-sm-6 col-md-3">
+                    <div class="p-3 bg-light rounded-3">
+                        <strong class="d-block text-primary">Backend Framework</strong>
+                        <span class="small text-muted">Spring Boot 4.x / Java 21 LTS</span>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="p-3 bg-light rounded-3">
+                        <strong class="d-block text-primary">Template Engine</strong>
+                        <span class="small text-muted">Thymeleaf 3.1.5</span>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="p-3 bg-light rounded-3">
+                        <strong class="d-block text-primary">Data & ORM</strong>
+                        <span class="small text-muted">Spring Data JPA / Hibernate</span>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="p-3 bg-light rounded-3">
+                        <strong class="d-block text-primary">Database</strong>
+                        <span class="small text-muted">H2 In-Memory &amp; MySQL 8.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

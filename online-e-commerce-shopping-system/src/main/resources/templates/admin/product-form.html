@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head((${product.id != null} ? 'Edit Product' : 'Add New Product') + ' | NexStore Admin')}"></head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<main class="py-4">
+    <div class="container">
+        <!-- Breadcrumb & Header -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/admin}">Admin Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/products}">Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product.id != null ? 'Edit Product' : 'Add Product'}">Form</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1" th:text="${product.id != null ? 'Edit Product Details' : 'Add New Product'}">Product Form</h3>
+                            <p class="text-muted small mb-0">Fill in the product catalog specifications below</p>
+                        </div>
+                        <a th:href="@{/admin/products}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                            &larr; Cancel
+                        </a>
+                    </div>
+
+                    <form th:action="@{/admin/products/save}" th:object="${product}" method="post">
+                        <!-- Hidden ID if editing -->
+                        <input type="hidden" th:field="*{id}">
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label small fw-semibold">Product Name *</label>
+                            <input type="text" id="name" th:field="*{name}" class="form-control rounded-3" 
+                                   placeholder="e.g. Sony WH-1000XM5 Wireless Headphones" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label for="categoryId" class="form-label small fw-semibold">Category *</label>
+                            <select id="categoryId" name="categoryId" class="form-select rounded-3" required>
+                                <option value="" disabled th:selected="${product.category == null}">Select a Category</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.name}"
+                                        th:selected="${product.category != null and product.category.id == cat.id}">
+                                    Category
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Pricing & Stock Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="price" class="form-label small fw-semibold">Sale Price ($) *</label>
+                                <input type="number" step="0.01" id="price" th:field="*{price}" class="form-control rounded-3" 
+                                       placeholder="199.99" required min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="originalPrice" class="form-label small fw-semibold">Original Price ($)</label>
+                                <input type="number" step="0.01" id="originalPrice" th:field="*{originalPrice}" class="form-control rounded-3" 
+                                       placeholder="249.99" min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="stockQuantity" class="form-label small fw-semibold">Inventory Stock *</label>
+                                <input type="number" id="stockQuantity" th:field="*{stockQuantity}" class="form-control rounded-3" 
+                                       placeholder="50" required min="0">
+                            </div>
+                        </div>
+
+                        <!-- Image URL -->
+                        <div class="mb-3">
+                            <label for="imageUrl" class="form-label small fw-semibold">Image URL (Web / Unsplash) *</label>
+                            <input type="url" id="imageUrl" th:field="*{imageUrl}" class="form-control rounded-3" 
+                                   placeholder="https://images.unsplash.com/photo-..." required>
+                            <div class="form-text small">Provide a direct high-quality image URL.</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label small fw-semibold">Product Description *</label>
+                            <textarea id="description" th:field="*{description}" class="form-control rounded-3" rows="4" 
+                                      placeholder="Detailed specifications, features, warranty, and package contents..." required></textarea>
+                        </div>
+
+                        <!-- Checkboxes & Rating -->
+                        <div class="row g-3 mb-4 align-items-center">
+                            <div class="col-md-6">
+                                <label for="rating" class="form-label small fw-semibold">Rating (1.0 to 5.0)</label>
+                                <input type="number" step="0.1" id="rating" th:field="*{rating}" class="form-control rounded-3" 
+                                       placeholder="4.5" min="1" max="5">
+                            </div>
+                            <div class="col-md-6 pt-md-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="featured" th:field="*{featured}">
+                                    <label class="form-check-label fw-semibold" for="featured">
+                                        Mark as Featured Product (displayed on Homepage)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow">
+                                <i class="bi bi-check-lg me-1"></i> Save Product
+                            </button>
+                            <a th:href="@{/admin/products}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

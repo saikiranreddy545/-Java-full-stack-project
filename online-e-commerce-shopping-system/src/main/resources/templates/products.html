@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('NexStore | Product Catalog')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<main class="py-4">
+    <div class="container">
+        <!-- Breadcrumb & Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 small">
+                        <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Products</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-bold mb-0">
+                    <span th:if="${selectedCategory != null}" th:text="${selectedCategory.name}">Category Products</span>
+                    <span th:if="${selectedCategory == null and searchQuery != null and !searchQuery.isBlank()}" th:text="${'Search: &quot;' + searchQuery + '&quot;'}">Search Results</span>
+                    <span th:if="${selectedCategory == null and (searchQuery == null or searchQuery.isBlank())}">All Products</span>
+                </h2>
+                <small class="text-muted" th:text="${products.size() + ' items available'}">0 items available</small>
+            </div>
+
+            <!-- Sort Form -->
+            <form th:action="@{/products}" method="get" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="category" th:value="${selectedCategoryId}">
+                <input type="hidden" name="query" th:value="${searchQuery}">
+                <label for="sortSelect" class="form-label mb-0 small text-muted text-nowrap">Sort by:</label>
+                <select id="sortSelect" name="sort" class="form-select form-select-sm rounded-pill shadow-sm" onchange="this.form.submit()">
+                    <option value="newest" th:selected="${currentSort == 'newest'}">Newest Arrivals</option>
+                    <option value="price_asc" th:selected="${currentSort == 'price_asc'}">Price: Low to High</option>
+                    <option value="price_desc" th:selected="${currentSort == 'price_desc'}">Price: High to Low</option>
+                    <option value="rating" th:selected="${currentSort == 'rating'}">Customer Rating</option>
+                    <option value="name_asc" th:selected="${currentSort == 'name_asc'}">Name (A-Z)</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center justify-content-between">
+                        <span>Categories</span>
+                        <a th:href="@{/products}" class="btn btn-link btn-sm text-decoration-none text-muted p-0">Clear</a>
+                    </h5>
+                    <div class="list-group list-group-flush">
+                        <a th:href="@{/products(query=${searchQuery}, sort=${currentSort})}" 
+                           th:classappend="${selectedCategoryId == null ? 'active bg-primary border-primary' : ''}"
+                           class="list-group-item list-group-item-action rounded-3 mb-1 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-grid-fill me-2"></i> All Categories</span>
+                        </a>
+                        <a th:each="cat : ${allCategories}" 
+                           th:href="@{/products(category=${cat.id}, query=${searchQuery}, sort=${currentSort})}"
+                           th:classappend="${selectedCategoryId == cat.id ? 'active bg-primary border-primary' : ''}"
+                           class="list-group-item list-group-item-action rounded-3 mb-1 d-flex justify-content-between align-items-center">
+                            <span>
+                                <i th:class="${'bi ' + (cat.icon ?: 'bi-tag') + ' me-2'}"></i>
+                                <span th:text="${cat.name}">Category Name</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Promo Banner in Sidebar -->
+                <div class="card border-0 bg-primary text-white rounded-4 p-4 shadow-sm text-center">
+                    <i class="bi bi-gift fs-1 mb-2"></i>
+                    <h5 class="fw-bold">Free Shipping</h5>
+                    <p class="small text-white-50 mb-3">On all domestic orders over $50. No promo code required.</p>
+                    <a th:href="@{/products}" class="btn btn-light btn-sm rounded-pill text-primary fw-bold">Shop Now</a>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="col-lg-9">
+                <!-- If No Products Found -->
+                <div th:if="${products.empty}" class="card border-0 shadow-sm rounded-4 text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                        <h4 class="fw-bold">No Products Found</h4>
+                        <p class="text-muted">We couldn't find any products matching your current filters or search term.</p>
+                        <a th:href="@{/products}" class="btn btn-primary rounded-pill px-4">
+                            View All Products
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Product Grid -->
+                <div th:unless="${products.empty}" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                    <div class="col" th:each="prod : ${products}">
+                        <div class="product-card">
+                            <div class="product-card-img-wrapper">
+                                <img th:src="${prod.imageUrl}" th:alt="${prod.name}" class="product-card-img">
+                                <span th:if="${prod.discountPercent > 0}" class="badge-discount" th:text="${prod.discountPercent + '% OFF'}">Sale</span>
+                                <span th:if="${prod.inStock}" class="badge bg-success badge-stock">In Stock</span>
+                                <span th:unless="${prod.inStock}" class="badge bg-danger badge-stock">Out of Stock</span>
+                            </div>
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <small class="text-uppercase text-muted fw-bold mb-1" th:text="${prod.category?.name}">Category</small>
+                                <h6 class="fw-bold mb-2 text-truncate" th:text="${prod.name}">Product Name</h6>
+                                
+                                <div class="d-flex align-items-center mb-2 small">
+                                    <span class="star-rating me-1"><i class="bi bi-star-fill"></i></span>
+                                    <span class="fw-bold me-1" th:text="${prod.rating}">4.5</span>
+                                    <span class="text-muted" th:text="${'(' + prod.reviewCount + ')'}">(12)</span>
+                                </div>
+
+                                <div class="mt-auto pt-2 d-flex align-items-baseline gap-2">
+                                    <span class="fs-5 fw-bold text-primary" th:text="${'$' + #numbers.formatDecimal(prod.price, 1, 2)}">$99.99</span>
+                                    <span th:if="${prod.originalPrice != null and prod.originalPrice > prod.price}" 
+                                          class="text-decoration-line-through text-muted small" 
+                                          th:text="${'$' + #numbers.formatDecimal(prod.originalPrice, 1, 2)}">$120.00</span>
+                                </div>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <a th:href="@{/products/{id}(id=${prod.id})}" class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill">
+                                        Details
+                                    </a>
+                                    <form th:action="@{/cart/add}" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="productId" th:value="${prod.id}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="redirectUrl" th:value="${#httpServletRequest != null ? #httpServletRequest.requestURI : '/products'}">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill" th:disabled="${!prod.inStock}">
+                                            <i class="bi bi-cart-plus me-1"></i> Add
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
